@@ -4,7 +4,8 @@ import (
 	"crypto/sha256"
 	"time"
 
-	"github.com/laenur/simple-login/pkg/randomstring"
+	"github.com/laenur/simple-login/pkg/constant"
+	"github.com/laenur/simple-login/pkg/random_string"
 )
 
 type RefreshToken struct {
@@ -14,12 +15,12 @@ type RefreshToken struct {
 }
 
 func NewRefreshToken(userID int64) RefreshToken {
-	random := randomstring.New(8)
+	random := random_string.New(8)
 	hashed := sha256.Sum256([]byte(random))
 	token := string(hashed[:])
 	return RefreshToken{
 		Token:      token,
 		UserID:     userID,
-		ValidUntil: time.Now().Add(time.Hour * 24 * 7),
+		ValidUntil: time.Now().Add(constant.RefreshTokenExpire),
 	}
 }

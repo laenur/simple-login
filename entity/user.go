@@ -3,7 +3,12 @@ package entity
 import (
 	"crypto/sha256"
 
-	"github.com/laenur/simple-login/pkg/randomstring"
+	"github.com/laenur/simple-login/pkg/random_string"
+)
+
+const (
+	RoleAdmin = 1000
+	RoleUser  = 1
 )
 
 type User struct {
@@ -11,6 +16,7 @@ type User struct {
 	Username string
 	Password string
 	Salt     string
+	Roles    []int
 }
 
 func (u *User) SetPassword(password string) {
@@ -20,14 +26,18 @@ func (u *User) SetPassword(password string) {
 	u.Password = hashedString
 }
 
-func NewUser(username string, password string) User {
-	salt := randomstring.New(8)
+func NewUser(username string, password string, roles []int) User {
+	salt := random_string.New(8)
 	salted := password + salt
 	hashed := sha256.Sum256([]byte(salted))
 	hashedString := string(hashed[:])
+	if len(roles) == 0 {
+		roles = append(roles, RoleUser)
+	}
 	return User{
 		Username: username,
 		Salt:     salt,
 		Password: hashedString,
+		Roles:    roles,
 	}
 }
